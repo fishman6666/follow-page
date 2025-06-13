@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>一键关注页面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: sans-serif;
@@ -12,7 +13,7 @@
       flex-wrap: wrap;
       gap: 12px;
     }
-    a.button {
+    a.button, button#followAll {
       display: inline-block;
       padding: 12px 18px;
       background: #1da1f2;
@@ -21,13 +22,22 @@
       border-radius: 6px;
       font-size: 14px;
       transition: background 0.3s;
+      border: none;
+      cursor: pointer;
     }
     a.button.clicked {
       background: #28a745;
     }
+    button#followAll:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
+
+<!-- “全部一键关注”按钮 -->
+<button id="followAll">全部一键关注 🚀</button>
 
 <script>
   const accounts = [
@@ -48,6 +58,7 @@
     btn.innerText = `已关注 ${name} ✅`;
   }
 
+  // 渲染每个关注按钮
   accounts.forEach(name => {
     const link = document.createElement("a");
     link.href = `https://x.com/intent/follow?screen_name=${name}`;
@@ -61,6 +72,21 @@
     });
 
     document.body.appendChild(link);
+  });
+
+  // 全部一键关注逻辑
+  document.getElementById("followAll").addEventListener("click", () => {
+    const allButtons = document.querySelectorAll("a.button:not(.clicked)");
+    allButtons.forEach((btn, i) => {
+      setTimeout(() => {
+        window.open(btn.href, "_blank");
+        const name = btn.href.split("screen_name=")[1];
+        markClicked(name, btn);
+      }, i * 500); // 间隔打开，避免被浏览器拦截
+    });
+
+    document.getElementById("followAll").disabled = true;
+    document.getElementById("followAll").innerText = "已全部打开 ✅";
   });
 </script>
 
